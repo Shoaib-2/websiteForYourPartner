@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { Heart, Sparkles, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { HeartParticles } from '@/components/ui/HeartParticles';
+import { Footer } from '@/components/ui/Footer';
 
 export default function HomePage() {
   const [mounted, setMounted] = useState(false);
@@ -108,19 +109,10 @@ export default function HomePage() {
         </motion.p>
       </motion.div>
 
-      {/* Bottom Decoration */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.2, duration: 0.8 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
-      >
-        <div className="flex items-center gap-2 text-blush-300">
-          <div className="w-12 h-px bg-gradient-to-r from-transparent to-blush-300" />
-          <Heart className="w-4 h-4 fill-current floating" />
-          <div className="w-12 h-px bg-gradient-to-l from-transparent to-blush-300" />
-        </div>
-      </motion.div>
+      {/* Footer */}
+      <Footer />
+
+
     </div>
   );
 }

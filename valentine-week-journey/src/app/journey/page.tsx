@@ -65,12 +65,12 @@ export default function JourneyPage() {
             {/* Overlay UI */}
             <div className="absolute inset-0 pointer-events-none">
                 {/* Top Bar */}
-                <div className="absolute top-0 left-0 right-0 p-2 sm:p-4 pointer-events-auto">
-                    <div className="flex items-center justify-between gap-1 sm:gap-2">
-                        <Link href="/">
-                            <Button variant="ghost" size="sm" className="bg-white/80 backdrop-blur-sm p-1.5 sm:p-2">
+                <div className="absolute top-16 sm:top-20 left-0 right-0 p-2 sm:p-4 pointer-events-auto">
+                    <div className="flex items-center justify-between gap-1 sm:gap-2 flex-nowrap">
+                        <Link href="/" className="flex-shrink-0">
+                            <Button variant="ghost" size="sm" className="bg-white/80 backdrop-blur-sm p-1.5 sm:p-2 min-w-[44px] min-h-[44px]">
                                 <ArrowLeft className="w-3 h-3 sm:w-4 sm:h-4" />
-                                <Home className="w-3 h-3 sm:w-4 sm:h-4" />
+                                <Home className="w-3 h-3 sm:w-4 sm:h-4 sm:ml-1" />
                             </Button>
                         </Link>
 
@@ -78,7 +78,7 @@ export default function JourneyPage() {
                         <motion.h1
                             initial={{ opacity: 0, y: -20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="text-base sm:text-2xl md:text-3xl font-bold text-charcoal bg-white/80 backdrop-blur-sm px-2 sm:px-4 py-1 sm:py-2 rounded-full"
+                            className="text-sm sm:text-base md:text-xl lg:text-2xl xl:text-3xl font-bold text-charcoal bg-white/80 backdrop-blur-sm px-2 sm:px-3 md:px-4 py-1 sm:py-2 rounded-full truncate flex-shrink-0 min-w-0"
                             style={{ fontFamily: 'var(--font-display)' }}
                         >
                             Our Love Journey
@@ -88,7 +88,7 @@ export default function JourneyPage() {
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="bg-white/80 backdrop-blur-sm p-1.5 sm:p-2"
+                            className="bg-white/80 backdrop-blur-sm p-1.5 sm:p-2 min-w-[44px] min-h-[44px] flex-shrink-0"
                             onClick={() => setShowTimeline(!showTimeline)}
                         >
                             <List className="w-3 h-3 sm:w-4 sm:h-4" />
@@ -132,7 +132,7 @@ export default function JourneyPage() {
                         initial={{ x: 300, opacity: 0 }}
                         animate={{ x: 0, opacity: 1 }}
                         exit={{ x: 300, opacity: 0 }}
-                        className="absolute right-0 top-12 sm:top-16 bottom-36 sm:bottom-20 w-64 sm:w-80 p-2 sm:p-4 pointer-events-auto overflow-y-auto"
+                        className="absolute right-0 top-28 sm:top-36 bottom-36 sm:bottom-20 w-64 sm:w-80 p-2 sm:p-4 pointer-events-auto overflow-y-auto"
                     >
                         <div className="glass-card p-2 sm:p-4 h-full overflow-y-auto">
                             <h2 className="text-sm sm:text-lg font-bold mb-2 sm:mb-4 text-charcoal">Day List</h2>

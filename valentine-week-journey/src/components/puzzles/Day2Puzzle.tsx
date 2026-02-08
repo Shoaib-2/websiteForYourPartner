@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/Button';
 import { CIPHER_MESSAGE } from '@/lib/constants';
+import { MailOpen } from 'lucide-react';
 
 export default function Day2Puzzle({ onComplete }: { onComplete: () => void }) {
     const [guess, setGuess] = useState('');
@@ -91,7 +92,7 @@ export default function Day2Puzzle({ onComplete }: { onComplete: () => void }) {
                     isLoading={isChecking}
                     size="lg"
                 >
-                    Decode Message 💌
+                    Decode Message <MailOpen className="ml-2 w-4 h-4 inline" />
                 </Button>
                 {!hint && (
                     <Button

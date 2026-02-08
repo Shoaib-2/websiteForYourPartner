@@ -1,12 +1,37 @@
 export class BackgroundMusic {
     private audio: HTMLAudioElement | null = null;
     private isPlaying: boolean = false;
+    private hasUserInteracted: boolean = false;
     
     constructor() {
         if (typeof window !== 'undefined') {
             this.audio = new Audio('/roi_slowed.mp3');
             this.audio.loop = true;
             this.audio.volume = 0.5;
+            
+            // Handle audio loading errors
+            this.audio.addEventListener('error', (e) => {
+                console.error('Audio loading error:', e);
+                this.isPlaying = false;
+            });
+            
+            this.audio.addEventListener('canplaythrough', () => {
+                console.log('Audio file loaded successfully');
+            });
+            
+            // Set up event listeners for user interaction
+            const enableAudio = () => {
+                this.hasUserInteracted = true;
+                console.log('User interaction detected, audio enabled');
+                // Remove listeners after first interaction
+                document.removeEventListener('click', enableAudio);
+                document.removeEventListener('touchstart', enableAudio);
+                document.removeEventListener('keydown', enableAudio);
+            };
+            
+            document.addEventListener('click', enableAudio, { once: true });
+            document.addEventListener('touchstart', enableAudio, { once: true });
+            document.addEventListener('keydown', enableAudio, { once: true });
         }
     }
     
@@ -17,7 +42,8 @@ export class BackgroundMusic {
             await this.audio.play();
             this.isPlaying = true;
         } catch (e) {
-            console.log('Audio playback requires user interaction first');
+            console.error('Audio play failed', e);
+            this.isPlaying = false;
         }
     }
     
@@ -29,11 +55,13 @@ export class BackgroundMusic {
     }
     
     async toggle(): Promise<boolean> {
+        console.log('BackgroundMusic.toggle() called, current state:', this.isPlaying);
         if (this.isPlaying) {
             this.pause();
         } else {
             await this.play();
         }
+        console.log('BackgroundMusic.toggle() completed, new state:', this.isPlaying);
         return this.isPlaying;
     }
     

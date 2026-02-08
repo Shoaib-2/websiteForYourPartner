@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { JourneyProvider } from "@/context/JourneyContext";
+import { Navbar } from "@/components/ui/Navbar";
 
 export const metadata: Metadata = {
-  title: "Valentine's Week Journey | Our Love Story",
-  description: "A special interactive journey celebrating our love throughout Valentine's week. Solve puzzles, unlock messages, and celebrate our story together.",
-  keywords: ["valentine", "love", "couples", "interactive", "journey", "puzzle"],
-  authors: [{ name: "With Love" }],
+  title: "Love's Odyssey: A Valentine's Week Adventure",
+  description: "Embark on a magical 8-day interactive 3D journey of love. Solve puzzles, unlock romantic messages, and celebrate Valentine's week with a unique digital experience.",
+  keywords: ["valentine", "love journey", "3d website", "interactive gift", "virtual valentine", "puzzle game", "digital love letter"],
+  authors: [{ name: "Shoaib Mohammed" }],
   openGraph: {
-    title: "Valentine's Week Journey",
-    description: "An interactive love story puzzle game for Valentine's week",
+    title: "Love's Odyssey | Valentine's Week Journey",
+    description: "An interactive 3D love story and puzzle game for the perfect Valentine's gift.",
     type: "website",
   },
 };
@@ -22,11 +23,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="icon" href="/favicon.ico" />
         <meta name="theme-color" content="#FFB3C1" />
       </head>
       <body className="antialiased">
         <JourneyProvider>
+          <Navbar />
           {children}
         </JourneyProvider>
       </body>

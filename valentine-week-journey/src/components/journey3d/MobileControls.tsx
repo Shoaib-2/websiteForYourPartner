@@ -141,10 +141,14 @@ export function MobileControls({ onControlChange, onMusicToggle, isMusicPlaying 
                     <Octagon className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 fill-current" />
                 </button>
 
-                {/* Music toggle button */}
+{/* Music toggle button */}
                 <button
                     className={`w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-full backdrop-blur-sm border-2 border-white/40 flex items-center justify-center text-xl sm:text-2xl md:text-3xl shadow-lg active:scale-95 transition-all ${isMusicPlaying ? 'bg-coral/60' : 'bg-white/30'}`}
-                    onTouchStart={handleMusicToggle}
+                    onClick={handleMusicToggle}
+                    onTouchEnd={(e) => {
+                        e.preventDefault();
+                        handleMusicToggle();
+                    }}
                 >
                     {isMusicPlaying ? <Volume2 className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10" /> : <VolumeX className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10" />}
                 </button>

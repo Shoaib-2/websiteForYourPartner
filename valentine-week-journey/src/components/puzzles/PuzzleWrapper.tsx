@@ -36,7 +36,7 @@ export function PuzzleWrapper({ dayNumber, children }: PuzzleWrapperProps) {
     const alreadyCompleted = isDayCompleted(dayNumber);
 
     return (
-        <div className="min-h-screen px-3 sm:px-4 py-4 sm:py-8">
+        <div className="min-h-screen px-3 sm:px-4 pb-4 sm:pb-8 pt-20 sm:pt-24">
             <Confetti isActive={showConfetti} />
 
             {/* Header */}
@@ -45,10 +45,10 @@ export function PuzzleWrapper({ dayNumber, children }: PuzzleWrapperProps) {
                 animate={{ opacity: 1, y: 0 }}
                 className="max-w-2xl mx-auto mb-4 sm:mb-8"
             >
-                <Link href="/journey">
-                    <Button variant="ghost" size="sm" className="mb-4">
+                <Link href="/journey" className="inline-block">
+                    <Button variant="ghost" size="sm" className="mb-4 min-w-[44px] min-h-[44px]">
                         <ArrowLeft className="w-4 h-4" />
-                        Back to Journey
+                        <span className="hidden sm:inline ml-2">Back to Journey</span>
                     </Button>
                 </Link>
 
@@ -96,7 +96,7 @@ export function PuzzleWrapper({ dayNumber, children }: PuzzleWrapperProps) {
                         />
 
                         <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-                            <Link href="/journey">
+                            <Link href="/journey" className="inline-block">
                                 <Button variant="primary">
                                     Continue Journey
                                 </Button>

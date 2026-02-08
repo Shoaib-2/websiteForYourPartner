@@ -156,9 +156,18 @@ export function RoadScene() {
     const [isMusicPlaying, setIsMusicPlaying] = useState(false);
 
     const handleMusicToggle = useCallback(async () => {
-        const music = getBackgroundMusic();
-        await music.toggle();
-        setIsMusicPlaying(music.getIsPlaying());
+        try {
+            console.log('Toggling music...');
+            const music = getBackgroundMusic();
+            const wasPlaying = music.getIsPlaying();
+            await music.toggle();
+            const isNowPlaying = music.getIsPlaying();
+            console.log(`Music toggle: ${wasPlaying} -> ${isNowPlaying}`);
+            setIsMusicPlaying(isNowPlaying);
+        } catch (error) {
+            console.error('Error toggling music:', error);
+            setIsMusicPlaying(false);
+        }
     }, []);
 
     return (
@@ -220,11 +229,11 @@ export function RoadScene() {
                 </div>
             </div>
 
-            {/* Desktop Music Toggle Button - position away from top right */}
+            {/* Desktop Music Toggle Button */}
             {!isMobile && (
                 <button
                     onClick={handleMusicToggle}
-                    className={`absolute top-24 left-4 w-12 h-12 md:w-14 md:h-14 rounded-full backdrop-blur-md border-2 border-white/40 flex items-center justify-center text-2xl shadow-lg transition-all hover:scale-110 active:scale-95 ${isMusicPlaying ? 'bg-coral/60' : 'bg-white/60'}`}
+                    className={`absolute bottom-8 right-8 w-12 h-12 md:w-14 md:h-14 z-50 rounded-full backdrop-blur-md border-2 border-white/40 flex items-center justify-center text-2xl shadow-lg transition-all hover:scale-110 active:scale-95 ${isMusicPlaying ? 'bg-coral/60' : 'bg-white/60'}`}
                     title={isMusicPlaying ? 'Mute Music' : 'Play Music'}
                 >
                     {isMusicPlaying ? <Volume2 className="w-6 h-6 md:w-8 md:h-8" /> : <VolumeX className="w-6 h-6 md:w-8 md:h-8" />}
