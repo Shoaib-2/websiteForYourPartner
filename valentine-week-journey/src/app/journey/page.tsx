@@ -24,6 +24,7 @@ const RoadScene = dynamic(
                     >
                         <Car size={64} className="text-primary" />
                     </motion.div>
+                    <p className="mt-4 text-charcoal-light">Loading 3D journey...</p>
                 </div>
             </div>
         )

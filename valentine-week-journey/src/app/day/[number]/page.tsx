@@ -101,9 +101,11 @@ export default function DayPage({ params }: DayPageProps) {
 
     const PuzzleComponent = puzzleComponents[dayNumber];
 
-    return (
+return (
         <PuzzleWrapper dayNumber={dayNumber}>
             {({ onComplete }) => <PuzzleComponent onComplete={onComplete} />}
         </PuzzleWrapper>
     );
 }
+
+
