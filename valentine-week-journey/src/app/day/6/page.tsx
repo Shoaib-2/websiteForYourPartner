@@ -1,3 +1,5 @@
+'use client';
+
 import Day6Puzzle from '@/components/puzzles/Day6Puzzle';
 import { PuzzleWrapper } from '@/components/puzzles/PuzzleWrapper';
 

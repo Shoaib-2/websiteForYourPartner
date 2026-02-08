@@ -5,7 +5,9 @@ export class BackgroundMusic {
     
     constructor() {
         if (typeof window !== 'undefined') {
-            this.audio = new Audio('/roi_slowed.mp3');
+            // Base path for GitHub Pages
+            const basePath = '/websiteForYourPartner';
+            this.audio = new Audio(`${basePath}/roi_slowed.mp3`);
             this.audio.loop = true;
             this.audio.volume = 0.5;
             
