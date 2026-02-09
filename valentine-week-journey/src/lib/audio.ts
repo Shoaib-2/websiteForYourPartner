@@ -5,9 +5,7 @@ export class BackgroundMusic {
     
     constructor() {
         if (typeof window !== 'undefined') {
-            // Base path from environment
-            const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
-            this.audio = new Audio(`${basePath}/roi_slowed.mp3`);
+            this.audio = new Audio('/roi_slowed.mp3');
             this.audio.loop = true;
             this.audio.volume = 0.5;
             
