@@ -55,7 +55,7 @@ export default function Day5Puzzle({ onComplete }: { onComplete: () => void }) {
                             value={answers[blankId] || ''}
                             onChange={(e) => handleInputChange(blankId, e.target.value)}
                             placeholder={blank?.hint}
-                            className="w-24 md:w-32 px-3 py-1 border-b-2 border-coral bg-transparent text-center focus:outline-none focus:border-rose-gold text-coral font-semibold text-base sm:text-lg touch-manipulation"
+                            className="w-20 sm:w-24 md:w-32 px-3 py-1 border-b-2 border-coral bg-transparent text-center focus:outline-none focus:border-rose-gold text-coral font-semibold text-base sm:text-lg touch-manipulation"
                         />
                     </span>
                 );
@@ -66,14 +66,14 @@ export default function Day5Puzzle({ onComplete }: { onComplete: () => void }) {
     };
 
     return (
-        <div className="text-center max-w-2xl mx-auto">
-            <div className="glass-card p-6 mb-6">
+        <div className="text-center max-w-2xl mx-auto w-full">
+            <div className="glass-card w-full p-5 sm:p-6 mb-6">
                 <p className="text-charcoal-light">
                     Fill in the blanks to complete this promise. The hints below each blank will help you!
                 </p>
             </div>
 
-            <div className="glass-card p-8 mb-6">
+            <div className="glass-card w-full p-6 sm:p-8 mb-6">
                 <p
                     className="text-xl md:text-2xl leading-relaxed text-charcoal"
                     style={{ fontFamily: 'var(--font-handwritten)' }}

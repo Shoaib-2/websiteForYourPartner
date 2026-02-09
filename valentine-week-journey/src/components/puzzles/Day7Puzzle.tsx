@@ -167,8 +167,8 @@ export default function Day7Puzzle({ onComplete }: { onComplete: () => void }) {
     };
 
     return (
-        <div className="text-center">
-            <div className="glass-card p-4 mb-6">
+        <div className="text-center w-full">
+            <div className="glass-card w-full max-w-md mx-auto p-4 mb-6">
                 <p className="text-charcoal-light text-sm">
                     💋 Trace the heart path! Start at the top and follow the dotted line.
                 </p>
@@ -182,12 +182,12 @@ export default function Day7Puzzle({ onComplete }: { onComplete: () => void }) {
                 <p className="text-xs text-charcoal-light mt-1">{Math.round(progress * 100)}% complete</p>
             </div>
 
-            <div className="glass-card p-4 inline-block">
+            <div className="glass-card w-full max-w-[320px] sm:max-w-[360px] mx-auto p-2 sm:p-4">
                 <canvas
                     ref={canvasRef}
                     width={300}
                     height={300}
-                    className="cursor-crosshair touch-none rounded-xl"
+                    className="w-full h-auto cursor-crosshair touch-none rounded-xl"
                     style={{ background: 'rgba(255, 249, 240, 0.8)' }}
                     onPointerDown={handleStart}
                     onPointerMove={handleMove}

@@ -45,23 +45,22 @@ export default function Day4Puzzle({ onComplete }: { onComplete: () => void }) {
     }, [foundCount, onComplete]);
 
     return (
-        <div className="text-center">
-            <div className="glass-card p-4 mb-6 inline-block">
+        <div className="text-center w-full">
+            <div className="glass-card w-full max-w-xs mx-auto p-4 mb-6">
                 <p className="text-sm text-charcoal-light mb-1">Hearts Found</p>
                 <p className="text-2xl font-bold text-coral">{foundCount} / {totalHearts}</p>
             </div>
 
-            <div className="glass-card p-4 mb-4">
+            <div className="glass-card w-full max-w-xl mx-auto p-4 mb-4">
                 <p className="text-charcoal-light text-sm">
                     🧸 The teddy bear has hidden hearts all over! Click on them to find them all!
                 </p>
             </div>
 
             <div
-                className="relative w-full aspect-video mx-auto rounded-2xl overflow-hidden"
+                className="relative w-full max-w-[600px] mx-auto aspect-[4/3] sm:aspect-video rounded-2xl overflow-hidden"
                 style={{
-                    background: 'linear-gradient(135deg, #FFF5F7 0%, #FFE5E5 50%, #FFF9F0 100%)',
-                    maxWidth: '600px'
+                    background: 'linear-gradient(135deg, #FFF5F7 0%, #FFE5E5 50%, #FFF9F0 100%)'
                 }}
             >
                 {/* Background decorations */}

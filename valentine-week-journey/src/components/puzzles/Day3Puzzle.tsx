@@ -89,20 +89,20 @@ export default function Day3Puzzle({ onComplete }: { onComplete: () => void }) {
     const matchedCount = cards.filter(c => c.isMatched).length / 2;
 
     return (
-        <div className="text-center">
-            <div className="glass-card p-4 mb-6 inline-flex gap-6">
-                <div>
+        <div className="text-center w-full">
+            <div className="glass-card w-full max-w-sm mx-auto p-4 mb-6 flex flex-wrap items-center justify-center gap-4 sm:gap-6">
+                <div className="min-w-[96px]">
                     <p className="text-sm text-charcoal-light">Moves</p>
                     <p className="text-2xl font-bold text-coral">{moves}</p>
                 </div>
-                <div className="w-px bg-blush-200" />
-                <div>
+                <div className="hidden sm:block w-px h-10 bg-blush-200" />
+                <div className="min-w-[96px]">
                     <p className="text-sm text-charcoal-light">Matched</p>
                     <p className="text-2xl font-bold text-green-600">{matchedCount}/{MEMORY_ITEMS.length}</p>
                 </div>
             </div>
 
-            <div className="grid grid-cols-4 gap-3 max-w-md mx-auto">
+            <div className="grid grid-cols-4 gap-2 sm:gap-3 w-full max-w-md mx-auto">
                 {cards.map((card) => (
                     <motion.div
                         key={card.id}

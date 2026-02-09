@@ -33,11 +33,11 @@ export default function Day8Finale({ onComplete }: { onComplete: () => void }) {
 
     if (!finaleStarted) {
         return (
-            <div className="text-center max-w-xl mx-auto">
+            <div className="text-center max-w-xl mx-auto w-full">
                 <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="glass-card p-8"
+                    className="glass-card w-full p-6 sm:p-8"
                 >
                     <motion.div
                         animate={{
@@ -80,7 +80,7 @@ export default function Day8Finale({ onComplete }: { onComplete: () => void }) {
     }
 
     return (
-        <div className="text-center max-w-2xl mx-auto">
+        <div className="text-center max-w-2xl mx-auto w-full">
             <motion.h2
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -104,7 +104,7 @@ export default function Day8Finale({ onComplete }: { onComplete: () => void }) {
                                     duration: 0.5,
                                     type: "spring"
                                 }}
-                                className="glass-card p-4 text-left"
+                                className="glass-card w-full p-4 sm:p-5 text-left"
                             >
                                 <div className="flex items-start gap-4">
                                     <div className="text-2xl flex-shrink-0">
@@ -134,7 +134,7 @@ export default function Day8Finale({ onComplete }: { onComplete: () => void }) {
                     animate={{ opacity: 1, y: 0 }}
                     className="mt-8"
                 >
-                    <div className="glass-card p-6 bg-gradient-to-br from-blush-100 to-cream">
+                    <div className="glass-card w-full p-5 sm:p-6 bg-gradient-to-br from-blush-100 to-cream">
                         <motion.div
                             animate={{
                                 scale: [1, 1.2, 1],

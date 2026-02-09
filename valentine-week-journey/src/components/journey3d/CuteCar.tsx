@@ -122,7 +122,8 @@ export const CuteCar = forwardRef<CuteCarRef, CuteCarProps>(function CuteCar({ m
         // Physics from centralized constants
         const { acceleration, maxSpeed, reverseMaxSpeed, friction, brakePower, turnRate } = CAR_PHYSICS;
         const speedScale = isMobile ? 1.4 : 1;
-        const accel = acceleration * speedScale;
+        const accelScale = isMobile ? 1.4 : 1.5;
+        const accel = acceleration * accelScale;
         const maxSpeedScaled = maxSpeed * speedScale;
         const reverseMax = reverseMaxSpeed * speedScale;
 

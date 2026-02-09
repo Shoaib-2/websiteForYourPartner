@@ -100,7 +100,7 @@ export default function Day6Puzzle({ onComplete }: { onComplete: () => void }) {
     };
 
     return (
-        <div className="text-center">
+        <div className="text-center w-full">
             <div className="glass-card p-4 mb-6">
                 <p className="text-charcoal-light text-sm">
                     🤗 Put the pieces back together! Click two pieces to swap them.
@@ -110,15 +110,8 @@ export default function Day6Puzzle({ onComplete }: { onComplete: () => void }) {
                 )}
             </div>
 
-            <div className="inline-block">
-                <div
-                    className="grid gap-1 p-2 bg-white/50 rounded-2xl shadow-lg"
-                    style={{
-                        gridTemplateColumns: 'repeat(3, 1fr)',
-                        width: '280px',
-                        height: '280px'
-                    }}
-                >
+            <div className="w-full max-w-[280px] mx-auto">
+                <div className="grid grid-cols-3 gap-1 p-2 sm:p-3 bg-white/50 rounded-2xl shadow-lg w-full aspect-square">
                     {Array.from({ length: gridSize }).map((_, pos) => {
                         const piece = getPieceAtPos(pos);
                         if (!piece) return null;
@@ -139,7 +132,7 @@ export default function Day6Puzzle({ onComplete }: { onComplete: () => void }) {
                                         ? '0 0 20px rgba(255, 107, 107, 0.5)'
                                         : '0 4px 15px rgba(0,0,0,0.1)'
                                 }}
-                                className="rounded-lg flex items-center justify-center cursor-pointer transition-all touch-manipulation select-none"
+                                className="w-full h-full rounded-lg flex items-center justify-center cursor-pointer transition-all touch-manipulation select-none"
                                 style={{
                                     background: `linear-gradient(135deg, ${gradient[0]}, ${gradient[1]})`,
                                     border: isSelected ? '3px solid #FF6B6B' : '1px solid rgba(255,255,255,0.5)'
