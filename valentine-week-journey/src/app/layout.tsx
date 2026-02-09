@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import "./globals.css";
 import { JourneyProvider } from "@/context/JourneyContext";
 import { Navbar } from "@/components/ui/Navbar";
@@ -26,6 +27,18 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <meta name="theme-color" content="#FFB3C1" />
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-HFZCCX9ZH1"
+          strategy="afterInteractive"
+        />
+        <Script id="gtag-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-HFZCCX9ZH1');
+          `}
+        </Script>
       </head>
       <body className="antialiased">
         <JourneyProvider>

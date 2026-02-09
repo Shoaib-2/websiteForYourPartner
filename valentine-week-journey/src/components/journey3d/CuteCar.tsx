@@ -121,9 +121,9 @@ export const CuteCar = forwardRef<CuteCarRef, CuteCarProps>(function CuteCar({ m
 
         // Physics from centralized constants
         const { acceleration, maxSpeed, reverseMaxSpeed, friction, brakePower, turnRate } = CAR_PHYSICS;
-        const speedScale = isMobile ? 1.4 : 5.0;
-        const accelScale = isMobile ? 1.4 : 4.2;
-        const turnScale = isMobile ? 1 : 1.35;
+        const speedScale = isMobile ? 5.0 : 5.0;
+        const accelScale = isMobile ? 4.4 : 4.2;
+        const turnScale = isMobile ? 1.35 : 1.35;
         const accel = acceleration * accelScale;
         const maxSpeedScaled = maxSpeed * speedScale;
         const reverseMax = reverseMaxSpeed * speedScale;
@@ -143,7 +143,7 @@ export const CuteCar = forwardRef<CuteCarRef, CuteCarProps>(function CuteCar({ m
         // Steering
         if (Math.abs(speed.current) > 0.05) {
             const turnFactor = Math.min(Math.abs(speed.current) / maxSpeedScaled, 1);
-            const turnAssist = isMobile ? 0.15 : 0.3;
+            const turnAssist = isMobile ? 0.25 : 0.3;
             const effectiveTurn = turnRateScaled * (turnAssist + (1 - turnAssist) * turnFactor);
             if (controlsState.left) rotation.current += effectiveTurn * (speed.current > 0 ? 1 : -1) * frameFactor;
             if (controlsState.right) rotation.current -= effectiveTurn * (speed.current > 0 ? 1 : -1) * frameFactor;
