@@ -71,7 +71,7 @@ export default function Day2Puzzle({ onComplete }: { onComplete: () => void }) {
                     value={guess}
                     onChange={(e) => setGuess(e.target.value)}
                     placeholder="Type the decoded message..."
-                    className="w-full px-6 py-4 rounded-xl border-2 border-blush-200 focus:border-coral focus:outline-none text-center text-lg transition-colors"
+                    className="w-full px-6 py-4 rounded-xl border-2 border-blush-200 focus:border-coral focus:outline-none text-center text-lg transition-colors touch-manipulation"
                     onKeyDown={(e) => e.key === 'Enter' && checkAnswer()}
                 />
             </div>

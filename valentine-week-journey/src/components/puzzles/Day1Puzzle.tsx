@@ -57,18 +57,18 @@ export default function Day1Puzzle({ onComplete }: { onComplete: () => void }) {
                 axis="x"
                 values={roses}
                 onReorder={setRoses}
-                className="flex justify-center gap-4 flex-wrap py-8"
+                className="flex justify-center gap-4 flex-wrap py-8 touch-none"
             >
                 {roses.map((rose) => (
                     <Reorder.Item
                         key={rose.id}
                         value={rose}
-                        className="cursor-grab active:cursor-grabbing"
+                        className="cursor-grab active:cursor-grabbing touch-none"
                     >
                         <motion.div
                             whileHover={{ scale: 1.1, rotate: 5 }}
                             whileTap={{ scale: 0.95 }}
-                            className="w-20 h-20 md:w-24 md:h-24 rounded-2xl flex items-center justify-center shadow-lg"
+                            className="w-20 h-20 md:w-24 md:h-24 rounded-2xl flex items-center justify-center shadow-lg select-none"
                             style={{
                                 backgroundColor: roseColors[rose.color],
                                 boxShadow: `0 8px 30px ${roseColors[rose.color]}40`

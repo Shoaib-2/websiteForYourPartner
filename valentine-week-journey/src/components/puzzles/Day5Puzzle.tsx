@@ -55,7 +55,7 @@ export default function Day5Puzzle({ onComplete }: { onComplete: () => void }) {
                             value={answers[blankId] || ''}
                             onChange={(e) => handleInputChange(blankId, e.target.value)}
                             placeholder={blank?.hint}
-                            className="w-24 md:w-32 px-3 py-1 border-b-2 border-coral bg-transparent text-center focus:outline-none focus:border-rose-gold text-coral font-semibold"
+                            className="w-24 md:w-32 px-3 py-1 border-b-2 border-coral bg-transparent text-center focus:outline-none focus:border-rose-gold text-coral font-semibold text-base sm:text-lg touch-manipulation"
                         />
                     </span>
                 );

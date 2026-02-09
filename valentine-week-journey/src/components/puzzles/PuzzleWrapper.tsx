@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Confetti } from '@/components/animations/Confetti';
 import { MessageReveal } from '@/components/MessageReveal';
@@ -11,6 +11,7 @@ import { DayIcon } from '@/components/ui/DayIcon';
 import { Button } from '@/components/ui/Button';
 import { ArrowLeft, RotateCcw, PartyPopper } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 interface PuzzleWrapperProps {
     dayNumber: number;
@@ -20,7 +21,8 @@ interface PuzzleWrapperProps {
 export function PuzzleWrapper({ dayNumber, children }: PuzzleWrapperProps) {
     const [isCompleted, setIsCompleted] = useState(false);
     const [showConfetti, setShowConfetti] = useState(false);
-    const { completeDay, unlockMessage, isDayCompleted } = useJourney();
+    const { completeDay, unlockMessage, isDayCompleted, canAccess, isLoading } = useJourney();
+    const router = useRouter();
 
     const handleComplete = useCallback(() => {
         if (isCompleted) return;
@@ -34,6 +36,24 @@ export function PuzzleWrapper({ dayNumber, children }: PuzzleWrapperProps) {
     }, [dayNumber, completeDay, unlockMessage, isCompleted]);
 
     const alreadyCompleted = isDayCompleted(dayNumber);
+    const canEnter = alreadyCompleted || canAccess(dayNumber);
+
+    useEffect(() => {
+        if (isLoading) return;
+        if (!canEnter) {
+            router.replace('/journey');
+        }
+    }, [isLoading, canEnter, router]);
+
+    if (!isLoading && !canEnter) {
+        return (
+            <div className="min-h-screen px-3 sm:px-4 pb-4 sm:pb-8 pt-20 sm:pt-24 flex items-center justify-center">
+                <div className="glass-card p-6 text-center">
+                    <p className="text-charcoal-light">Redirecting to your journey...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen px-3 sm:px-4 pb-4 sm:pb-8 pt-20 sm:pt-24">

@@ -86,7 +86,7 @@ export default function Day4Puzzle({ onComplete }: { onComplete: () => void }) {
                             exit={{ scale: 1.5, opacity: 0 }}
                             whileHover={{ opacity: 1, scale: 1.1 }}
                             onClick={() => !heart.found && handleHeartClick(heart.id)}
-                            className={`absolute transition-all cursor-pointer ${heart.found ? 'pointer-events-none' : ''
+                            className={`absolute transition-all cursor-pointer touch-manipulation select-none ${heart.found ? 'pointer-events-none' : ''
                                 }`}
                             style={{
                                 left: `${heart.x}%`,

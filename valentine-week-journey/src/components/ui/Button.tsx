@@ -24,6 +24,7 @@ export function Button({
     inline-flex items-center justify-center gap-2
     font-semibold rounded-full
     transition-all duration-300 ease-out
+    touch-manipulation
     disabled:opacity-50 disabled:cursor-not-allowed
     focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
   `;

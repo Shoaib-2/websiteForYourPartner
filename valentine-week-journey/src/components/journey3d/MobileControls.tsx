@@ -111,7 +111,6 @@ export function MobileControls({ onControlChange, onMusicToggle, isMusicPlaying,
     }, [isBraking, updateControls]);
 
     const handleJoystickStart = useCallback((e: React.TouchEvent) => {
-        e.preventDefault();
         if (joystickTouchIdRef.current !== null) return;
         const touch = e.changedTouches[0];
         if (!touch) return;
@@ -122,7 +121,6 @@ export function MobileControls({ onControlChange, onMusicToggle, isMusicPlaying,
     }, [updateFromTouch]);
 
     const handleJoystickMove = useCallback((e: React.TouchEvent) => {
-        e.preventDefault();
         const id = joystickTouchIdRef.current;
         if (id === null) return;
 
@@ -140,7 +138,6 @@ export function MobileControls({ onControlChange, onMusicToggle, isMusicPlaying,
     }, [updateFromTouch]);
 
     const handleJoystickEnd = useCallback((e: React.TouchEvent) => {
-        e.preventDefault();
         const id = joystickTouchIdRef.current;
         if (id === null) return;
 
@@ -152,20 +149,17 @@ export function MobileControls({ onControlChange, onMusicToggle, isMusicPlaying,
         }
     }, [resetJoystick]);
 
-    const handleJoystickCancel = useCallback((e: React.TouchEvent) => {
-        e.preventDefault();
+    const handleJoystickCancel = useCallback((_e: React.TouchEvent) => {
         resetJoystick();
     }, [resetJoystick]);
 
     // Brake handlers
-    const handleBrakeStart = useCallback((e: React.TouchEvent) => {
-        e.preventDefault();
+    const handleBrakeStart = useCallback((_e: React.TouchEvent) => {
         setIsBraking(true);
         updateControls(joystickPos.x, joystickPos.y, true);
     }, [joystickPos, updateControls]);
 
-    const handleBrakeEnd = useCallback((e: React.TouchEvent) => {
-        e.preventDefault();
+    const handleBrakeEnd = useCallback((_e: React.TouchEvent) => {
         setIsBraking(false);
         updateControls(joystickPos.x, joystickPos.y, false);
     }, [joystickPos, updateControls]);
@@ -225,11 +219,6 @@ export function MobileControls({ onControlChange, onMusicToggle, isMusicPlaying,
                 <button
                     className={`w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-full backdrop-blur-sm border-2 border-white/40 flex items-center justify-center text-xl sm:text-2xl md:text-3xl shadow-lg active:scale-95 transition-all ${isMusicPlaying ? 'bg-coral/60' : 'bg-white/30'} touch-none`}
                     onClick={handleMusicToggle}
-                    onTouchStart={(e) => e.preventDefault()}
-                    onTouchEnd={(e) => {
-                        e.preventDefault();
-                        handleMusicToggle();
-                    }}
                 >
                     {isMusicPlaying ? <Volume2 className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10" /> : <VolumeX className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10" />}
                 </button>

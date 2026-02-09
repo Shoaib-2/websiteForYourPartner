@@ -11,6 +11,7 @@ interface Point {
 
 export default function Day7Puzzle({ onComplete }: { onComplete: () => void }) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const activePointerId = useRef<number | null>(null);
     const [isDrawing, setIsDrawing] = useState(false);
     const [points, setPoints] = useState<Point[]>([]);
     const [progress, setProgress] = useState(0);
@@ -87,20 +88,13 @@ export default function Day7Puzzle({ onComplete }: { onComplete: () => void }) {
 
     }, [points, progress]);
 
-    const getCanvasPoint = (e: React.MouseEvent | React.TouchEvent): Point | null => {
+    const getCanvasPoint = (e: React.PointerEvent<HTMLCanvasElement>): Point | null => {
         const canvas = canvasRef.current;
         if (!canvas) return null;
 
         const rect = canvas.getBoundingClientRect();
         const scaleX = canvas.width / rect.width;
         const scaleY = canvas.height / rect.height;
-
-        if ('touches' in e) {
-            return {
-                x: (e.touches[0].clientX - rect.left) * scaleX,
-                y: (e.touches[0].clientY - rect.top) * scaleY
-            };
-        }
 
         return {
             x: (e.clientX - rect.left) * scaleX,
@@ -134,8 +128,10 @@ export default function Day7Puzzle({ onComplete }: { onComplete: () => void }) {
         }
     };
 
-    const handleStart = (e: React.MouseEvent | React.TouchEvent) => {
-        e.preventDefault();
+    const handleStart = (e: React.PointerEvent<HTMLCanvasElement>) => {
+        if (activePointerId.current !== null) return;
+        activePointerId.current = e.pointerId;
+        e.currentTarget.setPointerCapture(e.pointerId);
         const point = getCanvasPoint(e);
         if (point) {
             setIsDrawing(true);
@@ -143,8 +139,8 @@ export default function Day7Puzzle({ onComplete }: { onComplete: () => void }) {
         }
     };
 
-    const handleMove = (e: React.MouseEvent | React.TouchEvent) => {
-        e.preventDefault();
+    const handleMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
+        if (activePointerId.current !== e.pointerId) return;
         if (!isDrawing) return;
 
         const point = getCanvasPoint(e);
@@ -155,8 +151,13 @@ export default function Day7Puzzle({ onComplete }: { onComplete: () => void }) {
         }
     };
 
-    const handleEnd = () => {
+    const handleEnd = (e: React.PointerEvent<HTMLCanvasElement>) => {
+        if (activePointerId.current !== e.pointerId) return;
+        activePointerId.current = null;
         setIsDrawing(false);
+        if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+            e.currentTarget.releasePointerCapture(e.pointerId);
+        }
     };
 
     const resetDrawing = () => {
@@ -188,13 +189,11 @@ export default function Day7Puzzle({ onComplete }: { onComplete: () => void }) {
                     height={300}
                     className="cursor-crosshair touch-none rounded-xl"
                     style={{ background: 'rgba(255, 249, 240, 0.8)' }}
-                    onMouseDown={handleStart}
-                    onMouseMove={handleMove}
-                    onMouseUp={handleEnd}
-                    onMouseLeave={handleEnd}
-                    onTouchStart={handleStart}
-                    onTouchMove={handleMove}
-                    onTouchEnd={handleEnd}
+                    onPointerDown={handleStart}
+                    onPointerMove={handleMove}
+                    onPointerUp={handleEnd}
+                    onPointerLeave={handleEnd}
+                    onPointerCancel={handleEnd}
                 />
             </div>
 

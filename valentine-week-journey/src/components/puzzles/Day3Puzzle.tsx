@@ -107,7 +107,7 @@ export default function Day3Puzzle({ onComplete }: { onComplete: () => void }) {
                     <motion.div
                         key={card.id}
                         onClick={() => handleCardClick(card.id)}
-                        className="aspect-square cursor-pointer perspective-1000"
+                        className="aspect-square cursor-pointer perspective-1000 touch-manipulation select-none"
                         whileHover={{ scale: card.isMatched ? 1 : 1.05 }}
                         whileTap={{ scale: 0.95 }}
                     >

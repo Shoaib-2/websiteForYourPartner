@@ -139,7 +139,7 @@ export default function Day6Puzzle({ onComplete }: { onComplete: () => void }) {
                                         ? '0 0 20px rgba(255, 107, 107, 0.5)'
                                         : '0 4px 15px rgba(0,0,0,0.1)'
                                 }}
-                                className="rounded-lg flex items-center justify-center cursor-pointer transition-all"
+                                className="rounded-lg flex items-center justify-center cursor-pointer transition-all touch-manipulation select-none"
                                 style={{
                                     background: `linear-gradient(135deg, ${gradient[0]}, ${gradient[1]})`,
                                     border: isSelected ? '3px solid #FF6B6B' : '1px solid rgba(255,255,255,0.5)'
