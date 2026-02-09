@@ -3,7 +3,6 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import {
     getProgress,
-    saveProgress,
     markDayComplete,
     unlockMessage as unlockMessageStorage,
     canAccessDay,
@@ -35,6 +34,43 @@ export function JourneyProvider({ children }: { children: React.ReactNode }) {
         lastVisit: new Date().toISOString()
     });
     const [isLoading, setIsLoading] = useState(true);
+    const [serverUnlockedDay, setServerUnlockedDay] = useState<number | null>(null);
+
+    const syncUnlockedCookie = useCallback(async (completedDay: number) => {
+        try {
+            const response = await fetch('/api/progress', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ dayCompleted: completedDay })
+            });
+
+            if (!response.ok) {
+                return;
+            }
+
+            const data = await response.json() as { unlocked?: number };
+            if (typeof data.unlocked === 'number') {
+                setServerUnlockedDay(Math.max(1, Math.min(8, Math.floor(data.unlocked))));
+            }
+        } catch (error) {
+            console.error('Error syncing progress cookie:', error);
+        }
+    }, []);
+
+    const fetchServerProgress = useCallback(async () => {
+        try {
+            const response = await fetch('/api/progress', { method: 'GET', cache: 'no-store' });
+            if (!response.ok) {
+                return;
+            }
+            const data = await response.json() as { unlocked?: number };
+            if (typeof data.unlocked === 'number') {
+                setServerUnlockedDay(Math.max(1, Math.min(8, Math.floor(data.unlocked))));
+            }
+        } catch (error) {
+            console.error('Error fetching server progress:', error);
+        }
+    }, []);
 
     useEffect(() => {
         const loadProgress = () => {
@@ -44,7 +80,8 @@ export function JourneyProvider({ children }: { children: React.ReactNode }) {
         };
 
         loadProgress();
-    }, []);
+        void fetchServerProgress();
+    }, [fetchServerProgress]);
 
     const refreshProgress = useCallback(() => {
         const savedProgress = getProgress();
@@ -54,7 +91,8 @@ export function JourneyProvider({ children }: { children: React.ReactNode }) {
     const completeDay = useCallback((dayNumber: number) => {
         markDayComplete(dayNumber);
         refreshProgress();
-    }, [refreshProgress]);
+        void syncUnlockedCookie(dayNumber);
+    }, [refreshProgress, syncUnlockedCookie]);
 
     const unlockMessage = useCallback((messageId: string) => {
         unlockMessageStorage(messageId);
@@ -62,8 +100,10 @@ export function JourneyProvider({ children }: { children: React.ReactNode }) {
     }, [refreshProgress]);
 
     const canAccess = useCallback((dayNumber: number) => {
-        return canAccessDay(dayNumber, progress.completedDays);
-    }, [progress.completedDays]);
+        const localAllowed = canAccessDay(dayNumber, progress.completedDays);
+        const serverAllowed = serverUnlockedDay === null ? true : dayNumber <= serverUnlockedDay;
+        return localAllowed && serverAllowed;
+    }, [progress.completedDays, serverUnlockedDay]);
 
     const isDayCompleted = useCallback((dayNumber: number) => {
         return progress.completedDays.includes(dayNumber);
