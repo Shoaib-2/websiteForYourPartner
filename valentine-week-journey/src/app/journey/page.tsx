@@ -98,7 +98,7 @@ export default function JourneyPage() {
                 </div>
 
                 {/* Bottom Progress Bar - positioned above mobile controls on touch devices */}
-                <div className="absolute bottom-44 sm:bottom-44 md:bottom-56 lg:bottom-8 xl:bottom-4 left-0 right-0 p-2 sm:p-4 pointer-events-auto">
+                <div className="absolute bottom-[calc(env(safe-area-inset-bottom)+15rem)] sm:bottom-[calc(env(safe-area-inset-bottom)+14rem)] md:bottom-[calc(env(safe-area-inset-bottom)+12rem)] lg:bottom-8 xl:bottom-4 left-0 right-0 p-2 sm:p-4 pointer-events-auto">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}

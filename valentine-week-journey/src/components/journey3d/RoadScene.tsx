@@ -75,7 +75,7 @@ function Scene({ mobileControls, carRef, isMobile }: SceneProps) {
             <DayMarkers />
 
             {/* Player car - starts at position based on progress */}
-            <CuteCar ref={carRef} mobileControls={mobileControls} startPosition={carStartPosition} />
+            <CuteCar ref={carRef} mobileControls={mobileControls} startPosition={carStartPosition} isMobile={isMobile} />
         </>
     );
 }

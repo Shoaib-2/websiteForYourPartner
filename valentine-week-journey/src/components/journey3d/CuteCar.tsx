@@ -21,9 +21,10 @@ export interface CuteCarRef {
 interface CuteCarProps {
     mobileControls?: CarControls;
     startPosition?: [number, number, number];
+    isMobile?: boolean;
 }
 
-export const CuteCar = forwardRef<CuteCarRef, CuteCarProps>(function CuteCar({ mobileControls, startPosition = [0, 0.4, 28] }, ref) {
+export const CuteCar = forwardRef<CuteCarRef, CuteCarProps>(function CuteCar({ mobileControls, startPosition = [0, 0.4, 28], isMobile = false }, ref) {
     const carRef = useRef<THREE.Group>(null);
     const { camera, controls } = useThree();
 
@@ -118,10 +119,14 @@ export const CuteCar = forwardRef<CuteCarRef, CuteCarProps>(function CuteCar({ m
         if (!carRef.current) return;
 
         // Physics from centralized constants
-        const { acceleration: accel, maxSpeed, reverseMaxSpeed: reverseMax, friction, brakePower, turnRate } = CAR_PHYSICS;
+        const { acceleration, maxSpeed, reverseMaxSpeed, friction, brakePower, turnRate } = CAR_PHYSICS;
+        const speedScale = isMobile ? 1.4 : 1;
+        const accel = acceleration * speedScale;
+        const maxSpeedScaled = maxSpeed * speedScale;
+        const reverseMax = reverseMaxSpeed * speedScale;
 
         // Accelerate
-        if (controlsState.forward) speed.current = Math.min(speed.current + accel, maxSpeed);
+        if (controlsState.forward) speed.current = Math.min(speed.current + accel, maxSpeedScaled);
         if (controlsState.backward) speed.current = Math.max(speed.current - accel, -reverseMax);
         if (controlsState.brake) speed.current *= brakePower;
 
@@ -133,7 +138,7 @@ export const CuteCar = forwardRef<CuteCarRef, CuteCarProps>(function CuteCar({ m
 
         // Steering
         if (Math.abs(speed.current) > 0.005) {
-            const turnFactor = Math.min(Math.abs(speed.current) / maxSpeed, 1);
+            const turnFactor = Math.min(Math.abs(speed.current) / maxSpeedScaled, 1);
             if (controlsState.left) rotation.current += turnRate * turnFactor * (speed.current > 0 ? 1 : -1);
             if (controlsState.right) rotation.current -= turnRate * turnFactor * (speed.current > 0 ? 1 : -1);
         }
@@ -144,7 +149,7 @@ export const CuteCar = forwardRef<CuteCarRef, CuteCarProps>(function CuteCar({ m
         carRef.current.rotation.y = rotation.current;
 
         // Body roll
-        const targetRoll = (controlsState.left ? 0.08 : controlsState.right ? -0.08 : 0) * Math.abs(speed.current) / maxSpeed;
+        const targetRoll = (controlsState.left ? 0.08 : controlsState.right ? -0.08 : 0) * Math.abs(speed.current) / maxSpeedScaled;
         carRef.current.rotation.z = THREE.MathUtils.lerp(carRef.current.rotation.z, targetRoll, 0.1);
 
         // Keep on island (radius ~48)
