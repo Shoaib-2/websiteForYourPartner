@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
@@ -39,12 +39,14 @@ export function Road() {
 
 // Better looking trees with round foliage
 export function Trees() {
-    const treePositions = Array.from({ length: 16 }).map((_, i) => {
-        const angle = (i / 16) * Math.PI * 2 + Math.random() * 0.2;
-        const radius = i % 2 === 0 ? 16 + Math.random() * 3 : 38 + Math.random() * 5;
-        const scale = 0.7 + Math.random() * 0.6;
-        return { pos: [Math.cos(angle) * radius, 0, Math.sin(angle) * radius] as [number, number, number], scale };
-    });
+    const treePositions = useMemo(() => (
+        Array.from({ length: 16 }).map((_, i) => {
+            const angle = (i / 16) * Math.PI * 2 + Math.random() * 0.2;
+            const radius = i % 2 === 0 ? 16 + Math.random() * 3 : 38 + Math.random() * 5;
+            const scale = 0.7 + Math.random() * 0.6;
+            return { pos: [Math.cos(angle) * radius, 0, Math.sin(angle) * radius] as [number, number, number], scale };
+        })
+    ), []);
 
     return (
         <group>
@@ -86,18 +88,20 @@ function PrettyTree({ position, scale }: { position: [number, number, number]; s
 
 // Better flowers - actual flower shapes
 export function Flowers() {
-    const flowerData = Array.from({ length: 40 }).map((_, i) => {
-        const angle = Math.random() * Math.PI * 2;
-        const radius = 8 + Math.random() * 35;
-        // Avoid road area
-        if (radius > 26 && radius < 34) return null;
+    const flowerData = useMemo(() => {
         const colors = ['#FF69B4', '#FF1493', '#E91E63', '#F06292', '#FF5722', '#FFEB3B', '#9C27B0'];
-        return {
-            pos: [Math.cos(angle) * radius, 0, Math.sin(angle) * radius] as [number, number, number],
-            color: colors[Math.floor(Math.random() * colors.length)],
-            scale: 0.5 + Math.random() * 0.5
-        };
-    }).filter(Boolean);
+        return Array.from({ length: 40 }).map((_, i) => {
+            const angle = Math.random() * Math.PI * 2;
+            const radius = 8 + Math.random() * 35;
+            // Avoid road area
+            if (radius > 26 && radius < 34) return null;
+            return {
+                pos: [Math.cos(angle) * radius, 0, Math.sin(angle) * radius] as [number, number, number],
+                color: colors[Math.floor(Math.random() * colors.length)],
+                scale: 0.5 + Math.random() * 0.5
+            };
+        }).filter(Boolean);
+    }, []);
 
     return (
         <group>
@@ -245,11 +249,13 @@ export function Island() {
 
 // Heart decorations scattered around
 export function HeartDecorations() {
-    const hearts = Array.from({ length: 8 }).map((_, i) => {
-        const angle = (i / 8) * Math.PI * 2;
-        const radius = 12 + Math.random() * 5;
-        return [Math.cos(angle) * radius, 0.2, Math.sin(angle) * radius] as [number, number, number];
-    });
+    const hearts = useMemo(() => (
+        Array.from({ length: 8 }).map((_, i) => {
+            const angle = (i / 8) * Math.PI * 2;
+            const radius = 12 + Math.random() * 5;
+            return [Math.cos(angle) * radius, 0.2, Math.sin(angle) * radius] as [number, number, number];
+        })
+    ), []);
 
     return (
         <group>
@@ -266,6 +272,12 @@ export function HeartDecorations() {
 // Bigger, more visible clouds
 export function Clouds() {
     const cloudsRef = useRef<THREE.Group>(null);
+    const cloudData = useMemo(() => (
+        Array.from({ length: 8 }).map((_, i) => ({
+            position: [0, 30 + i * 5, 0] as [number, number, number],
+            scale: 1 + Math.random() * 0.5
+        }))
+    ), []);
 
     useFrame((state) => {
         if (cloudsRef.current) {
@@ -280,8 +292,8 @@ export function Clouds() {
 
     return (
         <group ref={cloudsRef}>
-            {Array.from({ length: 8 }).map((_, i) => (
-                <BigCloud key={i} position={[0, 30 + i * 5, 0]} scale={1 + Math.random() * 0.5} />
+            {cloudData.map((cloud, i) => (
+                <BigCloud key={i} position={cloud.position} scale={cloud.scale} />
             ))}
         </group>
     );

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Suspense, useRef, useState, useCallback, useEffect } from 'react';
+import React, { Suspense, useRef, useState, useCallback, useEffect, useMemo } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
@@ -27,12 +27,14 @@ function Scene({ mobileControls, carRef, isMobile }: SceneProps) {
     // Road radius is 30, use same formula as DayMarkers
     const roadRadius = 30;
     const completedCount = progress.completedDays.length;
-    // Position car at next day's location (or Day 1 if none completed)
-    const nextDay = Math.min(completedCount, 7); // 0-7 for array index
-    const angle = (nextDay / 8) * Math.PI * 2 - Math.PI / 2;
-    const carX = Math.cos(angle) * roadRadius;
-    const carZ = Math.sin(angle) * roadRadius;
-    const carStartPosition: [number, number, number] = [carX, 0.4, carZ];
+    const carStartPosition = useMemo<[number, number, number]>(() => {
+        // Position car at next day's location (or Day 1 if none completed)
+        const nextDay = Math.min(completedCount, 7); // 0-7 for array index
+        const angle = (nextDay / 8) * Math.PI * 2 - Math.PI / 2;
+        const carX = Math.cos(angle) * roadRadius;
+        const carZ = Math.sin(angle) * roadRadius;
+        return [carX, 0.4, carZ];
+    }, [completedCount]);
 
     return (
         <>
@@ -131,6 +133,7 @@ export function RoadScene() {
     const controlsRef = useRef<OrbitControlsImpl>(null);
     const carRef = useRef<CuteCarRef>(null);
     const [isMobile, setIsMobile] = useState(false);
+    const [isJoystickActive, setIsJoystickActive] = useState(false);
 
     // Detect mobile device
     useEffect(() => {
@@ -186,6 +189,7 @@ export function RoadScene() {
                     <OrbitControls
                         ref={controlsRef}
                         makeDefault
+                        enabled={!isMobile || !isJoystickActive}
                         enablePan={true}
                         enableZoom={false}
                         enableRotate={true}
@@ -208,6 +212,7 @@ export function RoadScene() {
                 onControlChange={handleMobileControlChange}
                 onMusicToggle={handleMusicToggle}
                 isMusicPlaying={isMusicPlaying}
+                onJoystickActiveChange={setIsJoystickActive}
             />
 
             {/* Desktop Controls overlay - hidden on mobile, tablets, and smart displays */}

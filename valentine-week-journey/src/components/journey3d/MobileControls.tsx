@@ -7,6 +7,7 @@ interface MobileControlsProps {
     onControlChange: (controls: ControlState) => void;
     onMusicToggle: () => void;
     isMusicPlaying: boolean;
+    onJoystickActiveChange?: (active: boolean) => void;
 }
 
 export interface ControlState {
@@ -17,12 +18,26 @@ export interface ControlState {
     brake: boolean;
 }
 
-export function MobileControls({ onControlChange, onMusicToggle, isMusicPlaying }: MobileControlsProps) {
+type TouchPoint = {
+    readonly identifier: number;
+    readonly clientX: number;
+    readonly clientY: number;
+};
+
+export function MobileControls({ onControlChange, onMusicToggle, isMusicPlaying, onJoystickActiveChange }: MobileControlsProps) {
     const [isMobile, setIsMobile] = useState(false);
     const joystickRef = useRef<HTMLDivElement>(null);
     const [joystickPos, setJoystickPos] = useState({ x: 0, y: 0 });
     const [isJoystickActive, setIsJoystickActive] = useState(false);
     const [isBraking, setIsBraking] = useState(false);
+    const joystickTouchIdRef = useRef<number | null>(null);
+    const lastControlsRef = useRef<ControlState>({
+        forward: false,
+        backward: false,
+        left: false,
+        right: false,
+        brake: false,
+    });
 
     // Detect mobile device
     useEffect(() => {
@@ -35,6 +50,21 @@ export function MobileControls({ onControlChange, onMusicToggle, isMusicPlaying 
     }, []);
 
     // Convert joystick position to controls
+    const emitControls = useCallback((controls: ControlState) => {
+        const last = lastControlsRef.current;
+        if (
+            controls.forward === last.forward &&
+            controls.backward === last.backward &&
+            controls.left === last.left &&
+            controls.right === last.right &&
+            controls.brake === last.brake
+        ) {
+            return;
+        }
+        lastControlsRef.current = controls;
+        onControlChange(controls);
+    }, [onControlChange]);
+
     const updateControls = useCallback((x: number, y: number, braking: boolean) => {
         const threshold = 0.3;
         const controls: ControlState = {
@@ -44,22 +74,20 @@ export function MobileControls({ onControlChange, onMusicToggle, isMusicPlaying 
             right: x > threshold,
             brake: braking,
         };
-        onControlChange(controls);
-    }, [onControlChange]);
+        emitControls(controls);
+    }, [emitControls]);
+
+    useEffect(() => {
+        onJoystickActiveChange?.(isJoystickActive);
+    }, [isJoystickActive, onJoystickActiveChange]);
 
     // Joystick touch handlers
-    const handleJoystickStart = useCallback((e: React.TouchEvent) => {
-        setIsJoystickActive(true);
-        handleJoystickMove(e);
-    }, []);
-
-    const handleJoystickMove = useCallback((e: React.TouchEvent) => {
-        if (!joystickRef.current || !isJoystickActive) return;
+    const updateFromTouch = useCallback((touch: TouchPoint) => {
+        if (!joystickRef.current) return;
 
         const rect = joystickRef.current.getBoundingClientRect();
         const centerX = rect.left + rect.width / 2;
         const centerY = rect.top + rect.height / 2;
-        const touch = e.touches[0];
 
         let dx = (touch.clientX - centerX) / (rect.width / 2);
         let dy = (touch.clientY - centerY) / (rect.height / 2);
@@ -73,21 +101,71 @@ export function MobileControls({ onControlChange, onMusicToggle, isMusicPlaying 
 
         setJoystickPos({ x: dx, y: dy });
         updateControls(dx, dy, isBraking);
-    }, [isJoystickActive, isBraking, updateControls]);
+    }, [isBraking, updateControls]);
 
-    const handleJoystickEnd = useCallback(() => {
+    const resetJoystick = useCallback(() => {
+        joystickTouchIdRef.current = null;
         setIsJoystickActive(false);
         setJoystickPos({ x: 0, y: 0 });
         updateControls(0, 0, isBraking);
     }, [isBraking, updateControls]);
 
+    const handleJoystickStart = useCallback((e: React.TouchEvent) => {
+        e.preventDefault();
+        if (joystickTouchIdRef.current !== null) return;
+        const touch = e.changedTouches[0];
+        if (!touch) return;
+
+        joystickTouchIdRef.current = touch.identifier;
+        setIsJoystickActive(true);
+        updateFromTouch(touch);
+    }, [updateFromTouch]);
+
+    const handleJoystickMove = useCallback((e: React.TouchEvent) => {
+        e.preventDefault();
+        const id = joystickTouchIdRef.current;
+        if (id === null) return;
+
+        let trackedTouch: TouchPoint | null = null;
+        for (let i = 0; i < e.touches.length; i += 1) {
+            const touch = e.touches[i];
+            if (touch.identifier === id) {
+                trackedTouch = touch;
+                break;
+            }
+        }
+        if (!trackedTouch) return;
+
+        updateFromTouch(trackedTouch);
+    }, [updateFromTouch]);
+
+    const handleJoystickEnd = useCallback((e: React.TouchEvent) => {
+        e.preventDefault();
+        const id = joystickTouchIdRef.current;
+        if (id === null) return;
+
+        for (let i = 0; i < e.changedTouches.length; i += 1) {
+            if (e.changedTouches[i].identifier === id) {
+                resetJoystick();
+                break;
+            }
+        }
+    }, [resetJoystick]);
+
+    const handleJoystickCancel = useCallback((e: React.TouchEvent) => {
+        e.preventDefault();
+        resetJoystick();
+    }, [resetJoystick]);
+
     // Brake handlers
-    const handleBrakeStart = useCallback(() => {
+    const handleBrakeStart = useCallback((e: React.TouchEvent) => {
+        e.preventDefault();
         setIsBraking(true);
         updateControls(joystickPos.x, joystickPos.y, true);
     }, [joystickPos, updateControls]);
 
-    const handleBrakeEnd = useCallback(() => {
+    const handleBrakeEnd = useCallback((e: React.TouchEvent) => {
+        e.preventDefault();
         setIsBraking(false);
         updateControls(joystickPos.x, joystickPos.y, false);
     }, [joystickPos, updateControls]);
@@ -104,10 +182,11 @@ export function MobileControls({ onControlChange, onMusicToggle, isMusicPlaying 
             {/* Left side: Joystick - responsive positioning */}
             <div
                 ref={joystickRef}
-                className="absolute bottom-20 sm:bottom-24 md:bottom-28 lg:bottom-8 left-4 sm:left-6 md:left-8 lg:left-8 w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 lg:w-36 lg:h-36 pointer-events-auto"
+                className="absolute bottom-20 sm:bottom-24 md:bottom-28 lg:bottom-8 left-4 sm:left-6 md:left-8 lg:left-8 w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 lg:w-36 lg:h-36 pointer-events-auto touch-none"
                 onTouchStart={handleJoystickStart}
                 onTouchMove={handleJoystickMove}
                 onTouchEnd={handleJoystickEnd}
+                onTouchCancel={handleJoystickCancel}
             >
                 {/* Joystick base */}
                 <div className="absolute inset-0 rounded-full bg-white/20 backdrop-blur-sm border-2 border-white/40">
@@ -134,17 +213,19 @@ export function MobileControls({ onControlChange, onMusicToggle, isMusicPlaying 
                     className={`w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-full flex items-center justify-center text-xl sm:text-2xl md:text-3xl font-bold shadow-lg transition-all ${isBraking
                         ? 'bg-red-500 scale-95'
                         : 'bg-white/30 backdrop-blur-sm border-2 border-white/40'
-                        }`}
+                        } touch-none`}
                     onTouchStart={handleBrakeStart}
                     onTouchEnd={handleBrakeEnd}
+                    onTouchCancel={handleBrakeEnd}
                 >
                     <Octagon className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 fill-current" />
                 </button>
 
 {/* Music toggle button */}
                 <button
-                    className={`w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-full backdrop-blur-sm border-2 border-white/40 flex items-center justify-center text-xl sm:text-2xl md:text-3xl shadow-lg active:scale-95 transition-all ${isMusicPlaying ? 'bg-coral/60' : 'bg-white/30'}`}
+                    className={`w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-full backdrop-blur-sm border-2 border-white/40 flex items-center justify-center text-xl sm:text-2xl md:text-3xl shadow-lg active:scale-95 transition-all ${isMusicPlaying ? 'bg-coral/60' : 'bg-white/30'} touch-none`}
                     onClick={handleMusicToggle}
+                    onTouchStart={(e) => e.preventDefault()}
                     onTouchEnd={(e) => {
                         e.preventDefault();
                         handleMusicToggle();
