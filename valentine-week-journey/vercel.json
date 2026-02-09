@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npm run build",
-  "installCommand": "npm ci",
+  "buildCommand": "NPM_CONFIG_SCRIPT_SHELL=/bin/bash npm run build",
+  "installCommand": "NPM_CONFIG_SCRIPT_SHELL=/bin/bash npm ci",
   "framework": "nextjs"
 }
