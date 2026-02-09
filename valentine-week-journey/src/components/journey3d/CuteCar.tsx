@@ -117,6 +117,7 @@ export const CuteCar = forwardRef<CuteCarRef, CuteCarProps>(function CuteCar({ m
 
     useFrame((state, delta) => {
         if (!carRef.current) return;
+        const frameFactor = Math.min(delta * 60, 2.5);
 
         // Physics from centralized constants
         const { acceleration, maxSpeed, reverseMaxSpeed, friction, brakePower, turnRate } = CAR_PHYSICS;
@@ -126,26 +127,26 @@ export const CuteCar = forwardRef<CuteCarRef, CuteCarProps>(function CuteCar({ m
         const reverseMax = reverseMaxSpeed * speedScale;
 
         // Accelerate
-        if (controlsState.forward) speed.current = Math.min(speed.current + accel, maxSpeedScaled);
-        if (controlsState.backward) speed.current = Math.max(speed.current - accel, -reverseMax);
-        if (controlsState.brake) speed.current *= brakePower;
+        if (controlsState.forward) speed.current = Math.min(speed.current + accel * frameFactor, maxSpeedScaled);
+        if (controlsState.backward) speed.current = Math.max(speed.current - accel * frameFactor, -reverseMax);
+        if (controlsState.brake) speed.current *= Math.pow(brakePower, frameFactor);
 
         // Friction
         if (!controlsState.forward && !controlsState.backward && !controlsState.brake) {
-            speed.current *= friction;
+            speed.current *= Math.pow(friction, frameFactor);
         }
         if (Math.abs(speed.current) < 0.001) speed.current = 0;
 
         // Steering
         if (Math.abs(speed.current) > 0.005) {
             const turnFactor = Math.min(Math.abs(speed.current) / maxSpeedScaled, 1);
-            if (controlsState.left) rotation.current += turnRate * turnFactor * (speed.current > 0 ? 1 : -1);
-            if (controlsState.right) rotation.current -= turnRate * turnFactor * (speed.current > 0 ? 1 : -1);
+            if (controlsState.left) rotation.current += turnRate * turnFactor * (speed.current > 0 ? 1 : -1) * frameFactor;
+            if (controlsState.right) rotation.current -= turnRate * turnFactor * (speed.current > 0 ? 1 : -1) * frameFactor;
         }
 
         // Move car
-        carRef.current.position.x -= Math.sin(rotation.current) * speed.current;
-        carRef.current.position.z -= Math.cos(rotation.current) * speed.current;
+        carRef.current.position.x -= Math.sin(rotation.current) * speed.current * frameFactor;
+        carRef.current.position.z -= Math.cos(rotation.current) * speed.current * frameFactor;
         carRef.current.rotation.y = rotation.current;
 
         // Body roll
@@ -161,7 +162,7 @@ export const CuteCar = forwardRef<CuteCarRef, CuteCarProps>(function CuteCar({ m
         }
 
         // Wheel spin & suspension
-        wheelSpin.current += speed.current * 4;
+        wheelSpin.current += speed.current * 4 * frameFactor;
         carRef.current.position.y = 0.4 + Math.abs(Math.sin(wheelSpin.current * 0.5)) * 0.02;
 
         // === CAMERA LOGIC ===

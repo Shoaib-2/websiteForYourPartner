@@ -176,7 +176,7 @@ export function MobileControls({ onControlChange, onMusicToggle, isMusicPlaying,
             {/* Left side: Joystick - responsive positioning */}
             <div
                 ref={joystickRef}
-                className="absolute bottom-[calc(env(safe-area-inset-bottom)+5rem)] sm:bottom-[calc(env(safe-area-inset-bottom)+6rem)] md:bottom-[calc(env(safe-area-inset-bottom)+7rem)] lg:bottom-8 left-4 sm:left-6 md:left-8 lg:left-8 w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 lg:w-36 lg:h-36 pointer-events-auto touch-none"
+                className="absolute bottom-[var(--mobile-controls-bottom)] left-4 sm:left-6 md:left-8 lg:left-8 w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 lg:w-36 lg:h-36 pointer-events-auto touch-none"
                 onTouchStart={handleJoystickStart}
                 onTouchMove={handleJoystickMove}
                 onTouchEnd={handleJoystickEnd}
@@ -201,7 +201,7 @@ export function MobileControls({ onControlChange, onMusicToggle, isMusicPlaying,
             </div>
 
             {/* Right side: Buttons - responsive positioning */}
-            <div className="absolute bottom-[calc(env(safe-area-inset-bottom)+5rem)] sm:bottom-[calc(env(safe-area-inset-bottom)+6rem)] md:bottom-[calc(env(safe-area-inset-bottom)+7rem)] lg:bottom-8 right-4 sm:right-6 md:right-8 lg:right-8 flex flex-col gap-2 sm:gap-3 md:gap-4 pointer-events-auto">
+            <div className="absolute bottom-[var(--mobile-controls-bottom)] right-4 sm:right-6 md:right-8 lg:right-8 flex flex-col gap-2 sm:gap-3 md:gap-4 pointer-events-auto">
                 {/* Brake button */}
                 <button
                     className={`w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-full flex items-center justify-center text-xl sm:text-2xl md:text-3xl font-bold shadow-lg transition-all ${isBraking

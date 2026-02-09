@@ -55,9 +55,13 @@ export default function JourneyPage() {
     }
 
     const completedCount = progress.completedDays.length;
+    const mobileLayoutVars = {
+        '--mobile-controls-bottom': 'calc(env(safe-area-inset-bottom) + clamp(0.75rem, 2.5vh, 1.25rem))',
+        '--mobile-progress-bottom': 'calc(env(safe-area-inset-bottom) + clamp(10.5rem, 31vh, 13.5rem))',
+    } as React.CSSProperties;
 
     return (
-        <div className="h-screen w-screen overflow-hidden relative">
+        <div className="h-screen w-screen overflow-hidden relative" style={mobileLayoutVars}>
             {/* Full Screen 3D Scene */}
             <div className="absolute inset-0">
                 <RoadScene />
@@ -98,7 +102,7 @@ export default function JourneyPage() {
                 </div>
 
                 {/* Bottom Progress Bar - positioned above mobile controls on touch devices */}
-                <div className="absolute bottom-[calc(env(safe-area-inset-bottom)+15rem)] sm:bottom-[calc(env(safe-area-inset-bottom)+14rem)] md:bottom-[calc(env(safe-area-inset-bottom)+12rem)] lg:bottom-8 xl:bottom-4 left-0 right-0 p-2 sm:p-4 pointer-events-auto">
+                <div className="absolute bottom-[var(--mobile-progress-bottom)] lg:bottom-8 xl:bottom-4 left-0 right-0 p-2 sm:p-4 pointer-events-auto">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
