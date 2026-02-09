@@ -57,25 +57,25 @@ export default function Day1Puzzle({ onComplete }: { onComplete: () => void }) {
                 axis="x"
                 values={roses}
                 onReorder={setRoses}
-                className="mx-auto flex w-full max-w-lg items-center justify-start gap-4 overflow-x-auto px-2 py-8"
-                style={{ touchAction: 'pan-y', WebkitOverflowScrolling: 'touch' }}
+                className="mx-auto flex w-full max-w-lg items-center justify-center gap-1 px-1 py-6 sm:gap-4 sm:px-2 sm:py-8"
+                style={{ touchAction: 'pan-y' }}
             >
                 {roses.map((rose) => (
                     <Reorder.Item
                         key={rose.id}
                         value={rose}
-                        className="flex-shrink-0 cursor-grab active:cursor-grabbing touch-manipulation"
+                        className="flex-shrink-0 cursor-grab active:cursor-grabbing touch-none"
                     >
                         <motion.div
                             whileHover={{ scale: 1.1, rotate: 5 }}
                             whileTap={{ scale: 0.95 }}
-                            className="w-20 h-20 md:w-24 md:h-24 rounded-2xl flex items-center justify-center shadow-lg select-none"
+                            className="w-14 h-14 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-2xl flex items-center justify-center shadow-lg select-none"
                             style={{
                                 backgroundColor: roseColors[rose.color],
                                 boxShadow: `0 8px 30px ${roseColors[rose.color]}40`
                             }}
                         >
-                            <span className="text-3xl md:text-4xl select-none">🌹</span>
+                            <span className="text-2xl sm:text-3xl md:text-4xl select-none">🌹</span>
                         </motion.div>
                     </Reorder.Item>
                 ))}
