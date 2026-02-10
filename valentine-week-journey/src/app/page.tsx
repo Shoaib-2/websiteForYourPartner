@@ -91,7 +91,7 @@ export default function HomePage() {
         >
           <Link href="/journey">
             <Button size="lg" className="group">
-              Begin Our Journey
+              Begin Your Journey
               <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
             </Button>
           </Link>

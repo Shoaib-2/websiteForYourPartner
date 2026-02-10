@@ -47,7 +47,7 @@ export function PuzzleWrapper({ dayNumber, children }: PuzzleWrapperProps) {
 
     if (!isLoading && !canEnter) {
         return (
-            <div className="min-h-screen px-3 sm:px-4 pb-4 sm:pb-8 pt-20 sm:pt-24 flex items-center justify-center">
+            <div className="min-h-screen px-3 sm:px-4 pb-4 sm:pb-8 pt-32 sm:pt-24 md:pt-28 flex items-center justify-center">
                 <div className="glass-card p-6 text-center">
                     <p className="text-charcoal-light">Redirecting to your journey...</p>
                 </div>
@@ -56,7 +56,7 @@ export function PuzzleWrapper({ dayNumber, children }: PuzzleWrapperProps) {
     }
 
     return (
-        <div className="min-h-screen px-3 sm:px-4 pb-4 sm:pb-8 pt-20 sm:pt-24">
+        <div className="min-h-screen px-3 sm:px-4 pb-4 sm:pb-8 pt-32 sm:pt-24 md:pt-28">
             <Confetti isActive={showConfetti} />
 
             {/* Header */}

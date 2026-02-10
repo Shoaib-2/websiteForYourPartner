@@ -70,7 +70,7 @@ export default function JourneyPage() {
             {/* Overlay UI */}
             <div className="absolute inset-0 pointer-events-none">
                 {/* Top Bar */}
-                <div className="absolute top-16 sm:top-20 left-0 right-0 p-2 sm:p-4 pointer-events-auto">
+                <div className="absolute top-32 sm:top-20 md:top-24 left-0 right-0 p-2 sm:p-4 pointer-events-auto">
                     <div className="flex items-center justify-between gap-1 sm:gap-2 flex-nowrap">
                         <Link href="/" className="flex-shrink-0">
                             <Button variant="ghost" size="sm" className="bg-white/80 backdrop-blur-sm p-1.5 sm:p-2 min-w-[44px] min-h-[44px]">

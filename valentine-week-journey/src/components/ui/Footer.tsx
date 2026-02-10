@@ -1,8 +1,11 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Heart } from 'lucide-react';
+import threadsIcon from '@/assets/threads-app-icon.svg';
 
 export function Footer() {
     const currentYear = new Date().getFullYear();
@@ -16,8 +19,27 @@ export function Footer() {
         >
             <div className="flex flex-col items-center justify-center gap-2 text-charcoal-light text-sm sm:text-base font-medium">
                 <div className="flex items-center gap-1.5">
-                    <span>Made with all the love in the world by</span>
-                    <span className="text-rose-gold font-bold">Shoaib Mohammed</span>
+                    <span>Made by</span>
+                    <span className="text-rose-gold font-bold">Shoaib</span>
+                </div>
+
+                <div className="flex items-center gap-1.5">
+                    <span>Follow me on</span>
+                    <Link
+                        href="https://www.threads.com/@_shoaib_7"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center text-rose-gold font-bold hover:text-coral transition-colors"
+                        aria-label="Follow me on Threads"
+                    >
+                        <span className="text-rose-gold font-bold inline-flex">
+                            <Image
+                                src={threadsIcon}
+                                alt="Threads"
+                                className="w-4 h-4"
+                            />
+                        </span>
+                    </Link>
                 </div>
 
                 <div className="flex items-center gap-1.5 opacity-80 text-xs sm:text-sm">
