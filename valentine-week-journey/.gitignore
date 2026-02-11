@@ -43,5 +43,7 @@ next-env.d.ts
 #Github pages
 /deploy.yml
 
+# local test scripts
+/scripts/ui-smoke-test.mjs
 
 

@@ -6,7 +6,7 @@ import { Confetti } from '@/components/animations/Confetti';
 import { MessageReveal } from '@/components/MessageReveal';
 import { useJourney } from '@/context/JourneyContext';
 import { DAY_MESSAGES, PUZZLE_INSTRUCTIONS } from '@/lib/constants';
-import { getDayName, getDayEmoji } from '@/lib/utils';
+import { getDayName } from '@/lib/utils';
 import { DayIcon } from '@/components/ui/DayIcon';
 import { Button } from '@/components/ui/Button';
 import { ArrowLeft, RotateCcw, PartyPopper } from 'lucide-react';
@@ -21,6 +21,8 @@ interface PuzzleWrapperProps {
 export function PuzzleWrapper({ dayNumber, children }: PuzzleWrapperProps) {
     const [isCompleted, setIsCompleted] = useState(false);
     const [showConfetti, setShowConfetti] = useState(false);
+    const [isReplaying, setIsReplaying] = useState(false);
+    const [replayKey, setReplayKey] = useState(0);
     const { completeDay, unlockMessage, isDayCompleted, canAccess, isLoading } = useJourney();
     const router = useRouter();
 
@@ -28,6 +30,7 @@ export function PuzzleWrapper({ dayNumber, children }: PuzzleWrapperProps) {
         if (isCompleted) return;
 
         setIsCompleted(true);
+        setIsReplaying(false);
         setShowConfetti(true);
         completeDay(dayNumber);
         unlockMessage(`day${dayNumber}`);
@@ -54,6 +57,8 @@ export function PuzzleWrapper({ dayNumber, children }: PuzzleWrapperProps) {
             </div>
         );
     }
+
+    const showCompletedView = isCompleted || (alreadyCompleted && !isReplaying);
 
     return (
         <div className="min-h-screen px-3 sm:px-4 pb-4 sm:pb-8 pt-32 sm:pt-24 md:pt-28">
@@ -96,7 +101,7 @@ export function PuzzleWrapper({ dayNumber, children }: PuzzleWrapperProps) {
                 transition={{ delay: 0.2 }}
                 className="max-w-3xl mx-auto"
             >
-                {(isCompleted || alreadyCompleted) ? (
+                {showCompletedView ? (
                     <div className="text-center">
                         <motion.div
                             initial={{ scale: 0 }}
@@ -115,16 +120,24 @@ export function PuzzleWrapper({ dayNumber, children }: PuzzleWrapperProps) {
                             dayNumber={dayNumber}
                         />
 
-                        <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-                            <Link href="/journey" className="inline-block">
-                                <Button variant="primary">
+                        <div className="mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
+                            <Link href="/journey" className="block sm:inline-block w-full sm:w-auto">
+                                <Button
+                                    variant="primary"
+                                    className="w-full sm:w-auto justify-center text-sm sm:text-base"
+                                >
                                     Continue Journey
                                 </Button>
                             </Link>
-                            {isCompleted && (
+                            {(isCompleted || alreadyCompleted) && (
                                 <Button
                                     variant="secondary"
-                                    onClick={() => setIsCompleted(false)}
+                                    className="w-full sm:w-auto justify-center text-sm sm:text-base"
+                                    onClick={() => {
+                                        setIsCompleted(false);
+                                        setIsReplaying(true);
+                                        setReplayKey(prev => prev + 1);
+                                    }}
                                 >
                                     <RotateCcw className="w-4 h-4" />
                                     Play Again
@@ -133,7 +146,9 @@ export function PuzzleWrapper({ dayNumber, children }: PuzzleWrapperProps) {
                         </div>
                     </div>
                 ) : (
-                    children({ onComplete: handleComplete })
+                    <div key={replayKey}>
+                        {children({ onComplete: handleComplete })}
+                    </div>
                 )}
             </motion.div>
         </div>

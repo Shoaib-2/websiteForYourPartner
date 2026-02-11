@@ -9,22 +9,56 @@ interface Point {
     y: number;
 }
 
+const HEART_TOP: Point = { x: 150, y: 70 };
+const HEART_BOTTOM: Point = { x: 150, y: 250 };
+const PATH_THRESHOLD = 26;
+const START_THRESHOLD = 45;
+
+const cubicBezier = (p0: Point, p1: Point, p2: Point, p3: Point, t: number): Point => {
+    const mt = 1 - t;
+    const mt2 = mt * mt;
+    const t2 = t * t;
+
+    return {
+        x: (mt2 * mt * p0.x) + (3 * mt2 * t * p1.x) + (3 * mt * t2 * p2.x) + (t2 * t * p3.x),
+        y: (mt2 * mt * p0.y) + (3 * mt2 * t * p1.y) + (3 * mt * t2 * p2.y) + (t2 * t * p3.y)
+    };
+};
+
+const sampleBezier = (p0: Point, p1: Point, p2: Point, p3: Point, segments: number) => {
+    const points: Point[] = [];
+    for (let i = 0; i <= segments; i++) {
+        points.push(cubicBezier(p0, p1, p2, p3, i / segments));
+    }
+    return points;
+};
+
+const HEART_PATH: Point[] = [
+    ...sampleBezier(
+        HEART_TOP,
+        { x: 50, y: 0 },
+        { x: 0, y: 100 },
+        HEART_BOTTOM,
+        70
+    ),
+    ...sampleBezier(
+        HEART_BOTTOM,
+        { x: 300, y: 100 },
+        { x: 250, y: 0 },
+        HEART_TOP,
+        70
+    ).slice(1)
+];
+
 export default function Day7Puzzle({ onComplete }: { onComplete: () => void }) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const activePointerId = useRef<number | null>(null);
+    const pathIndexRef = useRef(0);
     const [isDrawing, setIsDrawing] = useState(false);
     const [points, setPoints] = useState<Point[]>([]);
     const [progress, setProgress] = useState(0);
     const [completed, setCompleted] = useState(false);
-
-    // Heart path checkpoints
-    const heartCheckpoints: Point[] = [
-        { x: 150, y: 60 },   // top left curve
-        { x: 75, y: 120 },   // left side
-        { x: 150, y: 250 },  // bottom point
-        { x: 225, y: 120 },  // right side
-        { x: 150, y: 60 },   // back to top
-    ];
+    const [startHint, setStartHint] = useState(false);
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -33,33 +67,42 @@ export default function Day7Puzzle({ onComplete }: { onComplete: () => void }) {
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
 
-        // Clear canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Draw guide heart (dashed)
+        // Guide path
         ctx.save();
         ctx.strokeStyle = '#FFB3C1';
         ctx.lineWidth = 3;
-        ctx.setLineDash([5, 5]);
-
+        ctx.setLineDash([6, 6]);
         ctx.beginPath();
-        ctx.moveTo(150, 70);
-        // Left curve
-        ctx.bezierCurveTo(50, 0, 0, 100, 150, 250);
-        // Right curve
-        ctx.moveTo(150, 70);
-        ctx.bezierCurveTo(250, 0, 300, 100, 150, 250);
+        ctx.moveTo(HEART_PATH[0].x, HEART_PATH[0].y);
+        HEART_PATH.slice(1).forEach(point => ctx.lineTo(point.x, point.y));
         ctx.stroke();
         ctx.restore();
 
-        // Draw user path
-        if (points.length > 1) {
+        // Progress highlight along the heart path
+        const progressIndex = Math.floor(progress * (HEART_PATH.length - 1));
+        if (progressIndex > 1) {
             ctx.save();
             ctx.strokeStyle = '#FF6B6B';
-            ctx.lineWidth = 4;
+            ctx.lineWidth = 5;
+            ctx.lineCap = 'round';
+            ctx.shadowColor = 'rgba(255, 107, 107, 0.35)';
+            ctx.shadowBlur = 12;
+            ctx.beginPath();
+            ctx.moveTo(HEART_PATH[0].x, HEART_PATH[0].y);
+            HEART_PATH.slice(1, progressIndex + 1).forEach(point => ctx.lineTo(point.x, point.y));
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        // User path
+        if (points.length > 1) {
+            ctx.save();
+            ctx.strokeStyle = '#B76E79';
+            ctx.lineWidth = 3;
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
-
             ctx.beginPath();
             ctx.moveTo(points[0].x, points[0].y);
             for (let i = 1; i < points.length; i++) {
@@ -69,23 +112,30 @@ export default function Day7Puzzle({ onComplete }: { onComplete: () => void }) {
             ctx.restore();
         }
 
-        // Draw checkpoints
-        heartCheckpoints.forEach((point, index) => {
-            const reached = index < Math.floor(progress * heartCheckpoints.length);
-            ctx.beginPath();
-            ctx.arc(point.x, point.y, 8, 0, Math.PI * 2);
-            ctx.fillStyle = reached ? '#FF6B6B' : '#FFE5E5';
-            ctx.fill();
-            ctx.strokeStyle = '#FF6B6B';
-            ctx.lineWidth = 2;
-            ctx.stroke();
-        });
+        // Start marker
+        ctx.save();
+        ctx.fillStyle = '#FF6B6B';
+        ctx.beginPath();
+        ctx.arc(HEART_TOP.x, HEART_TOP.y, 9, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.restore();
 
-        // Start point indicator
+        // Hint marker for the next section
+        const hintIndex = Math.min(progressIndex + 6, HEART_PATH.length - 1);
+        const hintPoint = HEART_PATH[hintIndex];
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(hintPoint.x, hintPoint.y, 6, 0, Math.PI * 2);
+        ctx.fillStyle = '#FF8FA3';
+        ctx.fill();
+        ctx.restore();
+
         ctx.fillStyle = '#FF6B6B';
         ctx.font = '16px sans-serif';
-        ctx.fillText('Start Here ↓', 110, 45);
-
+        ctx.fillText('Start Here', HEART_TOP.x - 40, HEART_TOP.y - 20);
     }, [points, progress]);
 
     const getCanvasPoint = (e: React.PointerEvent<HTMLCanvasElement>): Point | null => {
@@ -102,29 +152,32 @@ export default function Day7Puzzle({ onComplete }: { onComplete: () => void }) {
         };
     };
 
-    const checkProgress = (newPoints: Point[]) => {
-        if (newPoints.length < 2) return;
+    const updateProgress = (point: Point) => {
+        let closestIndex = -1;
+        let closestDistance = Infinity;
 
-        let checkpointsReached = 0;
-
-        for (const checkpoint of heartCheckpoints) {
-            const reached = newPoints.some(point => {
-                const distance = Math.sqrt(
-                    Math.pow(point.x - checkpoint.x, 2) +
-                    Math.pow(point.y - checkpoint.y, 2)
-                );
-                return distance < 30;
-            });
-
-            if (reached) checkpointsReached++;
+        for (let i = 0; i < HEART_PATH.length; i++) {
+            const dx = point.x - HEART_PATH[i].x;
+            const dy = point.y - HEART_PATH[i].y;
+            const distance = dx * dx + dy * dy;
+            if (distance < closestDistance) {
+                closestDistance = distance;
+                closestIndex = i;
+            }
         }
 
-        const newProgress = checkpointsReached / heartCheckpoints.length;
-        setProgress(newProgress);
+        if (closestDistance <= PATH_THRESHOLD * PATH_THRESHOLD) {
+            const newIndex = Math.max(pathIndexRef.current, closestIndex);
+            if (newIndex !== pathIndexRef.current) {
+                pathIndexRef.current = newIndex;
+                const newProgress = newIndex / (HEART_PATH.length - 1);
+                setProgress(newProgress);
 
-        if (newProgress >= 0.8 && !completed) {
-            setCompleted(true);
-            setTimeout(() => onComplete(), 500);
+                if (newProgress >= 0.92 && !completed) {
+                    setCompleted(true);
+                    setTimeout(() => onComplete(), 500);
+                }
+            }
         }
     };
 
@@ -132,10 +185,16 @@ export default function Day7Puzzle({ onComplete }: { onComplete: () => void }) {
         if (activePointerId.current !== null) return;
         activePointerId.current = e.pointerId;
         e.currentTarget.setPointerCapture(e.pointerId);
+
         const point = getCanvasPoint(e);
         if (point) {
+            const dx = point.x - HEART_TOP.x;
+            const dy = point.y - HEART_TOP.y;
+            const distanceToStart = Math.sqrt(dx * dx + dy * dy);
+            setStartHint(distanceToStart > START_THRESHOLD && progress < 0.05);
             setIsDrawing(true);
             setPoints([point]);
+            updateProgress(point);
         }
     };
 
@@ -145,9 +204,11 @@ export default function Day7Puzzle({ onComplete }: { onComplete: () => void }) {
 
         const point = getCanvasPoint(e);
         if (point) {
-            const newPoints = [...points, point];
-            setPoints(newPoints);
-            checkProgress(newPoints);
+            setPoints(prev => {
+                const newPoints = [...prev, point];
+                return newPoints;
+            });
+            updateProgress(point);
         }
     };
 
@@ -161,18 +222,20 @@ export default function Day7Puzzle({ onComplete }: { onComplete: () => void }) {
     };
 
     const resetDrawing = () => {
+        pathIndexRef.current = 0;
         setPoints([]);
         setProgress(0);
         setCompleted(false);
+        setStartHint(false);
     };
 
     return (
         <div className="text-center w-full">
             <div className="glass-card w-full max-w-md mx-auto p-4 mb-6">
                 <p className="text-charcoal-light text-sm">
-                    💋 Trace the heart path! Start at the top and follow the dotted line.
+                    Trace the heart path. Stay close to the glowing line and follow the hint dot.
                 </p>
-                <div className="mt-2 h-2 bg-blush-100 rounded-full overflow-hidden">
+                <div className="mt-3 h-2 bg-blush-100 rounded-full overflow-hidden">
                     <motion.div
                         className="h-full bg-gradient-to-r from-coral to-rose-gold"
                         initial={{ width: 0 }}
@@ -180,6 +243,9 @@ export default function Day7Puzzle({ onComplete }: { onComplete: () => void }) {
                     />
                 </div>
                 <p className="text-xs text-charcoal-light mt-1">{Math.round(progress * 100)}% complete</p>
+                {startHint && (
+                    <p className="text-xs text-coral mt-1">Tip: start at the glowing dot.</p>
+                )}
             </div>
 
             <div className="glass-card w-full max-w-[320px] sm:max-w-[360px] mx-auto p-2 sm:p-4">

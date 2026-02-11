@@ -17,34 +17,41 @@ interface ConfettiProps {
     colors?: string[];
 }
 
+const DEFAULT_COLORS = ['#FF6B6B', '#FFB3C1', '#FFD700', '#FF8FA3', '#D4A5A5', '#B76E79'];
+
 export function Confetti({
     isActive,
     duration = 3000,
-    colors = ['#FF6B6B', '#FFB3C1', '#FFD700', '#FF8FA3', '#D4A5A5', '#B76E79']
+    colors = DEFAULT_COLORS
 }: ConfettiProps) {
     const [pieces, setPieces] = useState<ConfettiPiece[]>([]);
+    const colorsKey = colors.join('|');
 
     useEffect(() => {
-        if (isActive) {
-            const newPieces: ConfettiPiece[] = [];
-            for (let i = 0; i < 50; i++) {
-                newPieces.push({
-                    id: i,
-                    x: Math.random() * 100,
-                    color: colors[Math.floor(Math.random() * colors.length)],
-                    size: Math.random() * 10 + 5,
-                    rotation: Math.random() * 360
-                });
-            }
-            setPieces(newPieces);
-
-            const timeout = setTimeout(() => {
-                setPieces([]);
-            }, duration);
-
-            return () => clearTimeout(timeout);
+        if (!isActive) {
+            setPieces([]);
+            return;
         }
-    }, [isActive, duration, colors]);
+
+        const palette = colorsKey ? colorsKey.split('|') : DEFAULT_COLORS;
+        const newPieces: ConfettiPiece[] = [];
+        for (let i = 0; i < 50; i++) {
+            newPieces.push({
+                id: i,
+                x: Math.random() * 100,
+                color: palette[Math.floor(Math.random() * palette.length)],
+                size: Math.random() * 10 + 5,
+                rotation: Math.random() * 360
+            });
+        }
+        setPieces(newPieces);
+
+        const timeout = setTimeout(() => {
+            setPieces([]);
+        }, duration);
+
+        return () => clearTimeout(timeout);
+    }, [isActive, duration, colorsKey]);
 
     return (
         <AnimatePresence>
